@@ -7,7 +7,7 @@ const fs = require("fs");
 
 const outputPath = path.resolve(__dirname, "team.html");
 
-const render = require("./lib/htmlRenderer");
+// const render = require("./lib/htmlRenderer");
 
 const teamMembers = [];
 const idArray = [];
