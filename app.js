@@ -4,15 +4,16 @@ const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
-
-const outputPath = path.resolve(__dirname, "team.html");
+const engineerCard = require("./templates/engineer");
+const outputPath =  "./team.html";
 
 // const render = require("./lib/htmlRenderer");
 
 const teamMembers = [];
-const idArray = [];
+ 
+let id = teamMembers.length + 1 
 
-function appMenu() {
+
 
   function createManager() {
     console.log("Please build your team");
@@ -26,20 +27,6 @@ function appMenu() {
             return true;
           }
           return "Please enter at least one character.";
-        }
-      },
-      {
-        type: "input",
-        name: "managerId",
-        message: "What is your manager's id?",
-        validate: answer => {
-          const pass = answer.match(
-            /^[1-9]\d*$/
-          );
-          if (pass) {
-            return true;
-          }
-          return "Please enter a positive number greater than zero.";
         }
       },
       {
@@ -71,9 +58,8 @@ function appMenu() {
         }
       }
     ]).then(answers => {
-      const manager = new Manager(answers.managerName, answers.managerId, answers.managerEmail, answers.managerOfficeNumber);
+      const manager = new Manager(answers.managerName, id++, answers.managerEmail, answers.managerOfficeNumber);
       teamMembers.push(manager);
-      idArray.push(answers.managerId);
       createTeam();
     });
   }
@@ -86,6 +72,7 @@ function appMenu() {
         name: "memberChoice",
         message: "Which type of team member would you like to add?",
         choices: [
+          "Manager",
           "Engineer",
           "Intern",
           "I don't want to add any more team members"
@@ -93,6 +80,9 @@ function appMenu() {
       }
     ]).then(userChoice => {
       switch(userChoice.memberChoice) {
+      case "Manager":
+        createManager();
+        break;  
       case "Engineer":
         addEngineer();
         break;
@@ -104,6 +94,10 @@ function appMenu() {
       }
     });
   }
+
+  // function addManager() {
+  //   inquirer.prompt
+  // }
 
   function addEngineer() {
     inquirer.prompt([
@@ -118,25 +112,7 @@ function appMenu() {
           return "Please enter at least one character.";
         }
       },
-      {
-        type: "input",
-        name: "engineerId",
-        message: "What is your engineer's id?",
-        validate: answer => {
-          const pass = answer.match(
-            /^[1-9]\d*$/
-          );
-          if (pass) {
-            if (idArray.includes(answer)) {
-              return "This ID is already taken. Please enter a different number.";
-            } else {
-              return true;
-            }
-                        
-          }
-          return "Please enter a positive number greater than zero.";
-        }
-      },
+
       {
         type: "input",
         name: "engineerEmail",
@@ -163,9 +139,8 @@ function appMenu() {
         }
       }
     ]).then(answers => {
-      const engineer = new Engineer(answers.engineerName, answers.engineerId, answers.engineerEmail, answers.engineerGithub);
+      const engineer = new Engineer(answers.engineerName, id++, answers.engineerEmail, answers.engineerGithub);
       teamMembers.push(engineer);
-      idArray.push(answers.engineerId);
       createTeam();
     });
   }
@@ -183,25 +158,7 @@ function appMenu() {
           return "Please enter at least one character.";
         }
       },
-      {
-        type: "input",
-        name: "internId",
-        message: "What is your intern's id?",
-        validate: answer => {
-          const pass = answer.match(
-            /^[1-9]\d*$/
-          );
-          if (pass) {
-            if (idArray.includes(answer)) {
-              return "This ID is already taken. Please enter a different number.";
-            } else {
-              return true;
-            }
-                        
-          }
-          return "Please enter a positive number greater than zero.";
-        }
-      },
+      
       {
         type: "input",
         name: "internEmail",
@@ -228,20 +185,55 @@ function appMenu() {
         }
       }
     ]).then(answers => {
-      const intern = new Intern(answers.internName, answers.internId, answers.internEmail, answers.internSchool);
+      const intern = new Intern(answers.internName, id++, answers.internEmail, answers.internSchool);
       teamMembers.push(intern);
-      idArray.push(answers.internId);
+     
       createTeam();
     });
   }
 
   function buildTeam() {
-    fs.writeFileSync(outputPath, render(teamMembers), "utf-8");
+
+    let finalHTML =
+    `<!DOCTYPE html>
+    <html lang="en">
+    
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>My Team</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="style.css">
+        <script src="https://kit.fontawesome.com/c502137733.js"></script>
+    </head>
+    
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 jumbotron mb-3 team-heading">
+                    <h1 class="text-center">My Team</h1>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="team-area col-12 d-flex justify-content-center">` +
+    engineerCard(teamMembers) +
+    `    </div>
+    </div>
+</div>
+</body>
+
+</html>`
+    fs.writeFile(outputPath, finalHTML, function(error){
+      console.log("success")
+    });
   }
-
-  createManager();
-
-}
+ 
 
 
-appMenu();
+
+
+createTeam()
