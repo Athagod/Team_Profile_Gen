@@ -11,7 +11,7 @@ const managerCard = require("./templates/manager");
 
 const outputPath =  "./team.html";
 
-// const render = require("./lib/htmlRenderer");
+
 
 const teamMembers = [];
  
@@ -99,9 +99,7 @@ let id = teamMembers.length + 1
     });
   }
 
-  // function addManager() {
-  //   inquirer.prompt
-  // }
+  
 
   function addEngineer() {
     inquirer.prompt([
