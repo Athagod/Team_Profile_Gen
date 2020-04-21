@@ -5,6 +5,10 @@ const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
 const engineerCard = require("./templates/engineer");
+const internCard = require("./templates/intern");
+const managerCard = require("./templates/manager");
+
+
 const outputPath =  "./team.html";
 
 // const render = require("./lib/htmlRenderer");
@@ -220,7 +224,7 @@ let id = teamMembers.length + 1
         <div class="container">
             <div class="row">
                 <div class="team-area col-12 d-flex justify-content-center">` +
-    engineerCard(teamMembers) +
+    engineerCard(teamMembers) + internCard(teamMembers) + managerCard(teamMembers)
     `    </div>
     </div>
 </div>
